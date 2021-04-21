@@ -56,4 +56,4 @@ jobs:
         app-name: 'ms-workshop0421'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_66c08ed37ea74f98857efc7ef17312c4 }}
-        package: .
+        package: .net-app
