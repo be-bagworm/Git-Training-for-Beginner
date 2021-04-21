@@ -13,9 +13,9 @@ env:
   APP_PATH: './src/Web'
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: windows-latest
-
+    
     steps:
     - uses: actions/checkout@v2
 
@@ -30,24 +30,41 @@ jobs:
     - name: dotnet publish
       run: dotnet publish ${{ env.APP_PATH }} -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
-    - name: Upload artifact for deployment job
-      uses: actions/upload-artifact@v2
-      with:
-        name: .net-app
-        path: ${{env.DOTNET_ROOT}}/myapp
+#  build:
+#    runs-on: windows-latest
 
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    environment:
-      name: 'production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+#    steps:
+#    - uses: actions/checkout@v2
 
-    steps:
-    - name: Download artifact from build job
-      uses: actions/download-artifact@v2
-      with:
-        name: .net-app
+#    - name: Set up .NET Core
+#      uses: actions/setup-dotnet@v1
+#      with:
+#        dotnet-version: '3.1.301'
+
+#    - name: Build with dotnet
+#      run: dotnet build ${{ env.APP_PATH }} --configuration Release
+
+#    - name: dotnet publish
+#      run: dotnet publish ${{ env.APP_PATH }} -c Release -o ${{env.DOTNET_ROOT}}/myapp
+
+#    - name: Upload artifact for deployment job
+#      uses: actions/upload-artifact@v2
+#      with:
+#        name: .net-app
+#        path: ${{env.DOTNET_ROOT}}/myapp
+
+#  deploy:
+#    runs-on: windows-latest
+#    needs: build
+#    environment:
+#      name: 'production'
+#      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+#    steps:
+#    - name: Download artifact from build job
+#      uses: actions/download-artifact@v2
+#      with:
+#        name: .net-app
 
     - name: Deploy to Azure Web App
       id: deploy-to-webapp
@@ -56,4 +73,5 @@ jobs:
         app-name: 'ms-workshop0421'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_66c08ed37ea74f98857efc7ef17312c4 }}
-        package: .
+#        package: .
+        package: ${{env.DOTNET_ROOT}}/myapp
